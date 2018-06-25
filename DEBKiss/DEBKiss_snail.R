@@ -108,11 +108,35 @@ iter <- 20000
 
 
 ## inference call
+## NB: Running 20000 iterations for this inference call takes about 5 minutes on a modern desktop computer 
 mcmc_samples <- de_mcmc(N = iter, data = dat, de.model = DEBKiss1,
                         obs.model = DEBKiss_obs_model, all.params = mcmc.pars,
                         Tmax = max(dat$time), data.times = dat$time, cnt = 500,
                         plot = FALSE, verbose.mcmc = TRUE,
                         solver = "ode", method="rk4")
+
+## MCMC convergence assessment
+## uncomment the following section of R code to run an additional two chains and calculate the potential scale reduction factor to assess convergence
+## deBInfer currently does not provide automated facilities for running multiple chains, we need to  repeat the inference call to run additional chains
+
+# mcmc_samples_chain_2 <- de_mcmc(N = iter, data = dat, de.model = DEBKiss1,
+#                         obs.model = DEBKiss_obs_model, all.params = mcmc.pars,
+#                         Tmax = max(dat$time), data.times = dat$time, cnt = 500,
+#                         plot = FALSE, verbose.mcmc = TRUE,
+#                         solver = "ode", method="rk4")
+
+# mcmc_samples_chain_3 <- de_mcmc(N = iter, data = dat, de.model = DEBKiss1,
+#                                 obs.model = DEBKiss_obs_model, all.params = mcmc.pars,
+#                                 Tmax = max(dat$time), data.times = dat$time, cnt = 500,
+#                                 plot = FALSE, verbose.mcmc = TRUE,
+#                                 solver = "ode", method="rk4")
+
+## We then collate the samples from all three chains into an mcmc.list object, the data structure used by the CODA package for multi-chain MCMC outputs
+# three_chains <- as.mcmc.list(list(mcmc_samples$samples, mcmc_samples_chain_2$samples, mcmc_samples_chain_3$samples))
+
+## and lastly we calculate the potential scale reduction factor (also known as Gelman and Rubin's convergence diagnostic or R-hat). Values < 1.1 indicate approximate convergence.
+
+# gelman.diag(three_chains)
 
 
 ## plotting samples using built in functions, based on the CODA package in R
@@ -184,23 +208,19 @@ points(dat$time, dat$Egg, pch=25, lwd=2)
 ## Extra plots
 source("plotting_extras.R")
 
-samps<-mcmc(mcmc_samples$samples[1001:20000,])
+samps<-window(mcmc_samples$samples, 1001, 20000, thin = 10)
 ss<-summary(samps)
 
 par(mfrow = c(1,3))
 ps<-c("kappa", "logJMv", "sdlog.L", "sdlog.E")
 for (pp in ps[1:2]){
-    pretty_posterior_plot(samps, ss, ref.params = parms,
+    pretty_posterior_plot(samps, ss, ref.params = NULL,
                           param = pp, legend = FALSE)
 }
 
 plot.new()
-#for (pp in ps[3:4]){
-#    pretty_posterior_plot(samps, ss, ref.params = parms,
-#                          param = pp, legend = FALSE)
-#}
 
-legend("topleft", legend = c("true parameter value", "posterior mean value", "95% HPDI"), lty = c(2,1, NA), pch = c(NA,NA,15), col = c("black", "black", rethinking::col.alpha("black",0.15)))
+legend("topleft", legend = c("posterior mean value", "95% HPDI"), lty = c(1, NA), pch = c(NA,15), col = c("black", rethinking::col.alpha("black",0.15)), bty = 'n')
 
 
 
