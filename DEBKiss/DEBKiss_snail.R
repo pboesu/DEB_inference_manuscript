@@ -1,3 +1,7 @@
+### Bayesian inference for a DEBKiss model
+### Supplementary code for the manuscript Boersch-Supan and Johnson 2018: Two case studies detailing Bayesian parameter inference for dynamic energy budget models
+
+
 ### These provide the code from the package, the implemented model,
 ### and likelihood, respectively
 library("deBInfer")

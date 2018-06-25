@@ -1,5 +1,5 @@
 #Bayesian inference for the scaled standard DEB model
-#supplementary code for the manuscript Boersch-Supan and Johnson 2018: A tutorial on Bayesian parameter inference for dynamic energy budget models
+#Supplementary code for the manuscript Boersch-Supan and Johnson 2018: Two case studies detailing Bayesian parameter inference for dynamic energy budget models
 
 library(devtools)
 #install the development version of deBInfer that is able to recalculate boundary values in the MCMC
@@ -185,7 +185,7 @@ plot(R ~ time, data = Lumter_simulated_obs, type = "l", ylim = c(0, max(Lumter_s
 points(R_noisy ~ time, data = Lumter_simulated_obs)
 
 
-# observation model for inferenve
+# observation model for inference
 Lumter_obs_model_WN<-function(data, sim.data, samp){
   ec<- 1e-4 #numerical correction, follows Johnson et al. 2013
   

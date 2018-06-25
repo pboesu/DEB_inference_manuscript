@@ -1,6 +1,6 @@
-# DEB_inference
+# Two case studies detailing Bayesian parameter inference for DEB models
 
-This repository contains code that forms the supplementary materials for the manuscript "A tutorial on Bayesian parameter inference for dynamic energy budget models" by Philipp Boersch-Supan and Leah Johnson.
+This repository contains code that forms the supplementary materials for the manuscript ["Two case studies detailing Bayesian parameter inference for dynamic energy budget models"](https://doi.org/10.1101/259705) by Philipp Boersch-Supan and Leah Johnson.
 
 The folder `DEBKiss` contains the DEBKiss case study. The main R script is `DEBKiss_snail.R`. The remaining files contain function definitions and the underlying data.
 
