@@ -159,15 +159,15 @@ parms<-c(deltaM=0.401, f=1, fb=0.8, JAM=0.11, yAX=0.8,
 ## parameters from the paper
 times<-seq(0, 160, by=0.1)
 
-thin<-seq(1001, 20000, by=10)
-samps.thin<-mcmc_samples$samples[thin,c(1,4)]
+samps.thin<-window(mcmc_samples$samples[,c('kappa','logJMv')], 1001, 20000, thin = 50)
 
 ptemp<-parms
 ## creating objects to hold the length and reproduction trajectories
-Lws<-WRs<-matrix(NA, nrow=length(times), ncol=length(thin))
+Lws<-WRs<-matrix(NA, nrow=length(times), ncol=nrow(samps.thin))
 
 ## this for loop will call the solver with the thinned parameter samples
-for(i in 1:length(thin)){
+## NB: simulating the trajectories will take 3-5 minutes on a modern desktop computer
+for(i in 1:nrow(samps.thin)){
     ## replace kappa and logJMv with the posterior samples
     ptemp[6:7]<-samps.thin[i,]
 
@@ -178,6 +178,7 @@ for(i in 1:length(thin)){
     Lws[,i]<-out[,3]
     WRs[,i]<-out[,4]
 }
+
 
 ## calculates the posterior mean trajectories
 Lwmean<-apply(Lws, 1, mean)
