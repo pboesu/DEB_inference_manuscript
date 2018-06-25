@@ -221,19 +221,18 @@ points(dat$time, dat$Egg, pch=25, lwd=2)
 
 source("plotting_extras.R")
 
-samps<-window(mcmc_samples$samples, 1001, 20000, thin = 10)
+samps<-window(mcmc_samples$samples, 1001, 20000)
 ss<-summary(samps)
 
-par(mfrow = c(1,3))
+par(mfrow = c(2,2))
 ps<-c("kappa", "logJMv", "sdlog.L", "sdlog.E")
-for (pp in ps[1:2]){
+for (pp in ps[1:4]){
     pretty_posterior_plot(samps, ss, ref.params = NULL,
-                          param = pp, legend = FALSE)
+                          param = pp, legend = FALSE, deBInfer_result = mcmc_samples)
 }
 
-plot.new()
 
-legend("topleft", legend = c("posterior mean value", "95% HPDI"), lty = c(1, NA), pch = c(NA,15), col = c("black", rethinking::col.alpha("black",0.15)), bty = 'n')
+legend("topright", legend = c("posterior mean value", "95% HPDI", "prior density"), lty = c(1, NA,2), pch = c(NA,15,NA), col = c("black", rethinking::col.alpha("black",0.15), 'red'), bty = 'n')
 
 
 
