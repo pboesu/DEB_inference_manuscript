@@ -161,9 +161,9 @@ parms<-c(deltaM=0.401, f=1, fb=0.8, JAM=0.11, yAX=0.8,
 
 ## Plot the data together with the model output based on the
 ## parameters from the paper
-times<-seq(0, 160, by=0.1)
+times<-seq(0, 160, by=0.5)
 
-samps.thin<-window(mcmc_samples$samples[,c('kappa','logJMv')], 1001, 20000, thin = 50)
+samps.thin<-window(mcmc_samples$samples[,c('kappa','logJMv')], 1001, 20000, thin = 10)
 
 ptemp<-parms
 ## creating objects to hold the length and reproduction trajectories
@@ -171,6 +171,7 @@ Lws<-WRs<-matrix(NA, nrow=length(times), ncol=nrow(samps.thin))
 
 ## this for loop will call the solver with the thinned parameter samples
 ## NB: simulating the trajectories will take 3-5 minutes on a modern desktop computer
+Sys.time()
 for(i in 1:nrow(samps.thin)){
     ## replace kappa and logJMv with the posterior samples
     ptemp[6:7]<-samps.thin[i,]
@@ -182,6 +183,7 @@ for(i in 1:nrow(samps.thin)){
     Lws[,i]<-out[,3]
     WRs[,i]<-out[,4]
 }
+Sys.time()
 
 
 ## calculates the posterior mean trajectories
@@ -197,12 +199,12 @@ WRqs<-apply(WRs, 1, quantile, probs=c(0.025, 0.975))
 
 ## plots the posterior means and CIs of the trajectories with the data
 par(mfrow=c(1,2),mai=c(.8,.8,.2,.1))# bty="n")
-plot(out[,1], Lwmean, type="l", ylab="observed length", xlab="time (days)", lwd=2, col=2, lty=1, pch=23, ylim=c(12, 31), xlim=c(0,148))
+plot(out[,1], Lwmean, type="l", ylab="Observed shell length (mm)", xlab="Time (days)", lwd=2, col=2, lty=1, pch=23, ylim=c(12, 31), xlim=c(0,148))
 lines(out[,1], Lwqs[1,], lty=3, lwd=2, col=2)
 lines(out[,1], Lwqs[2,], lty=3, lwd=2, col=2)
 points(dat$time, dat$L, lwd=2)
 
-plot(out[,1], WRmean*parms["yBA"]/parms["WB0"], type="l", ylab="total eggs", xlab="time (days)", ylim=c(0, 1100), lwd=2, col=4, lty=1, xlim=c(0,148))
+plot(out[,1], WRmean*parms["yBA"]/parms["WB0"], type="l", ylab="Total eggs", xlab="Time (days)", ylim=c(0, 1100), lwd=2, col=4, lty=1, xlim=c(0,148))
 lines(out[,1], WRqs[1,]*parms["yBA"]/parms["WB0"], lty=3, lwd=2, col=4)
 lines(out[,1], WRqs[2,]*parms["yBA"]/parms["WB0"], lty=3, lwd=2, col=4)
 
@@ -211,6 +213,12 @@ points(dat$time, dat$Egg, pch=25, lwd=2)
 
 
 ## Extra plots
+## The plots showing shaded HDPIs use functionality from the rethinking package, which is not yet on CRAN but can be installed using devtools:
+
+## install.packages(c("devtools","mvtnorm","loo","coda"), repos="https://cloud.r-project.org/",dependencies=TRUE)
+## library(devtools)
+## install_github("rmcelreath/rethinking")
+
 source("plotting_extras.R")
 
 samps<-window(mcmc_samples$samples, 1001, 20000, thin = 10)

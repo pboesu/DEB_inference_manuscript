@@ -10,16 +10,19 @@
 library(coda)
 library(rethinking)
 
-pretty_posterior_plot <- function(samples, summary, ref.params, param, HDPI = 0.95, legend = TRUE){
+pretty_posterior_plot <- function(samples, summary, ref.params, param, HDPI = 0.95, legend = TRUE, deBInfer_result = NULL){
   rethinking::dens(unlist(samples[,param]), show.HPDI = 0.95, main = param)
   abline(v = ref.params[param], lwd = 2, lty = 2)
   abline(v = summary$statistics[param, "Mean"])
-  if(legend){
-      legend("topleft",
-             legend = c("true parameter value", "posterior mean value", "95% HPDI"),
-             lty = c(2,1, NA), pch = c(NA,NA,15),
-             col = c("black", "black", rethinking::col.alpha("black",0.15)))
+  if(!is.null(deBInfer_result)){
+    dprior <- paste("d", deBInfer_result$all.params[[param]]$prior, 
+                    sep = "")
+    plot.range <- seq(par("usr")[1], par("usr")[2], length.out = 100)
+    prior.dens <- do.call(dprior, c(list(x = plot.range), 
+                                    deBInfer_result$all.params[[param]]$hypers))
+    lines(plot.range, prior.dens, col = 'red', lty = 3, lwd = 1.5)
   }
+  if(legend) legend("topleft", legend = c("true parameter value", "posterior mean value", "95% HPDI"), lty = c(2,1, NA), pch = c(NA,NA,15), col = c("black", "black", rethinking::col.alpha("black",0.15)))
 }
 
 ### where samples is a coda object, i.e. the samples slot of a debinfer_result object (i.e. debinfer_result$samples)
