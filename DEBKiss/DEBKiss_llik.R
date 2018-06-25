@@ -1,4 +1,4 @@
-source("DEBKiss_model.R")
+#Likelihood function for the snail DEBKiss model
 
 DEBKiss_obs_model <- function(data, sim.data, samp){
 

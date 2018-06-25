@@ -1,5 +1,4 @@
 ## DEBKiss Process Model
-library(deSolve)
 
 DEBKiss1<-function(time,y,params){
 
